@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-
+import axios from 'axios';
 import './App.css';
-
+import Post from './Post/Post'
 import Header from './Header/Header';
 import Compose from './Compose/Compose';
 
@@ -19,13 +19,19 @@ class App extends Component {
   }
   
   componentDidMount() {
-
+    axios.get('https://practiceapi.devmountain.com/api/posts') .then(results => {
+      this.setState ({posts: results.data})
+    })
   }
+  // that arrow function is the same as function (results) {
+      //this.setState ({posts: results.data})
 
-  updatePost() {
+  updatePost(id, text) {
+    axios.put (`https://practiceapi.devmountain.com/api/?id=${id}`,{
+      text: text
+    })
+  }
   
-  }
-
   deletePost() {
 
   }
@@ -36,7 +42,11 @@ class App extends Component {
 
   render() {
     const { posts } = this.state;
-
+    // console.log(posts);
+    // let mappedPosts = posts.map((e) => {
+    //   console.log(e);
+    //   return <Post key = {e.id}/>
+    // })
     return (
       <div className="App__parent">
         <Header />
@@ -44,7 +54,16 @@ class App extends Component {
         <section className="App__content">
 
           <Compose />
-          
+          {
+            posts.map( post => (
+              <Post key={ post.id }
+              text = {post.text}
+              date = {post.date}
+              id = {post.id}
+              updatePostFn = {this.updatePost}
+               />
+            ))
+          }
         </section>
       </div>
     );
